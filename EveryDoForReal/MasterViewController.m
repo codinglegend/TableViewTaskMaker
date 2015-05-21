@@ -110,9 +110,37 @@
 // if you don't include the .text below it will say "incompatible pointer types assgining to UILabel from NSString, meaning that you're trying to assign something to the entire customTitle or customDetailDescription label when really you want to be only assigning it to the text.
     
     ToDo *object = self.objects[indexPath.row]; // used to have id object here instead on the left side, but because object is pointing to objets, which is an array of items of type ToDo (firstTask, secondTask, etc), we know the return type is object ToDo. Therefore use that as the returnType.
-    cell.customTitle.text = [object title];
+ cell.customTitle.text = [object title];
+// no longer need the above line or the two lines below because the NSMutableAttributedString line overwrites these
+    
     cell.customDetailDescription.text = [object taskDescription];
     cell.customPriority.text = [NSString stringWithFormat:@"%@", [object priorityNumber]]; // used stringWithFormat to create string, because we cannot directly access a number from customPriority (not on the list), so we convert the right side into a string and access the text.
+    
+    
+    NSMutableAttributedString *customTitleString = [[NSMutableAttributedString alloc] initWithString:[object title]];
+    
+    NSMutableAttributedString *customDetailedString = [[NSMutableAttributedString alloc] initWithString:[object taskDescription]];
+    
+    NSMutableAttributedString *customPriorityString = [[NSMutableAttributedString alloc] initWithString: [NSString stringWithFormat:@"%@", [object priorityNumber]]];
+
+    if (object.isCompletedIndicator == YES){
+        [customTitleString addAttribute:NSStrikethroughStyleAttributeName
+                                  value:@2
+                                  range:NSMakeRange(0, [customTitleString length])];
+        
+        [customDetailedString addAttribute:NSStrikethroughStyleAttributeName
+                                  value:@2
+                                  range:NSMakeRange(0, [customDetailedString length])];
+        
+        [customPriorityString addAttribute:NSStrikethroughStyleAttributeName
+                                  value:@2
+                                  range:NSMakeRange(0, [customPriorityString length])];
+    }
+    
+    cell.customTitle.attributedText = customTitleString;
+    cell.customDetailDescription.attributedText = customDetailedString;
+    cell.customPriority.attributedText = customPriorityString;
+    
     return cell;
 }
 
